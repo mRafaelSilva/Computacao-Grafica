@@ -5,54 +5,44 @@ PROJECT(Generator)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+# Definir o Toolchain do vcpkg para encontrar FreeGLUT automaticamente
+set(CMAKE_TOOLCHAIN_FILE "C:/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
+
+# Adicionar o executável
 add_executable(${PROJECT_NAME} generator.cpp)
 
+# Encontrar e incluir OpenGL
 find_package(OpenGL REQUIRED)
-include_directories(${OpenGL_INCLUDE_DIRS})
-link_directories(${OpenGL_LIBRARY_DIRS})
-add_definitions(${OpenGL_DEFINITIONS})
 
-if(NOT OPENGL_FOUND)
-    message(ERROR " OPENGL not found!")
-endif(NOT OPENGL_FOUND)
+# Definir o caminho do FreeGLUT manualmente
+set(GLUT_INCLUDE_DIR "C:/vcpkg/installed/x64-windows/include")
+set(GLUT_LIB_DIR "C:/vcpkg/installed/x64-windows/lib")
+set(GLUT_LIBRARIES "C:/vcpkg/installed/x64-windows/lib/freeglut.lib")
 
-if  (WIN32)
+# Incluir diretórios de OpenGL e FreeGLUT
+include_directories(${OPENGL_INCLUDE_DIRS} ${GLUT_INCLUDE_DIR})
+link_directories(${OPENGL_LIBRARY_DIRS} ${GLUT_LIB_DIR})
 
-	message(STATUS "Toolkits_DIR set to: " ${TOOLKITS_FOLDER})
-	set(TOOLKITS_FOLDER "" CACHE PATH "Path to Toolkits folder")
-	
-	if (NOT EXISTS "${TOOLKITS_FOLDER}/glut/GL/glut.h" OR NOT EXISTS "${TOOLKITS_FOLDER}/glut/glut32.lib")
-		message(ERROR ": GLUT not found")
-	endif (NOT EXISTS "${TOOLKITS_FOLDER}/glut/GL/glut.h" OR NOT EXISTS "${TOOLKITS_FOLDER}/glut/glut32.lib")	
-	
-	
-	include_directories(${TOOLKITS_FOLDER}/glut )
-	target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARIES} 
-										  ${TOOLKITS_FOLDER}/glut/glut32.lib)
-	
-	if (EXISTS "${TOOLKITS_FOLDER}/glut/glut32.dll" )
-		file(COPY ${TOOLKITS_FOLDER}/glut/glut32.dll DESTINATION ${CMAKE_BINARY_DIR})
-	endif(EXISTS "${TOOLKITS_FOLDER}/glut/glut32.dll" )	
-	
-	set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
-	
-else (WIN32) #Linux and Mac
+# Adicionar bibliotecas ao executável
+target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES})
 
-	set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} Wno-deprecated")
-	find_package(GLUT REQUIRED)
-	include_directories(${GLUT_INCLUDE_DIR})
-	link_directories(${GLUT_LIBRARY_DIRS})
-	add_definitions(${GLUT_DEFINITIONS})
-	
-	target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} )
-	if(NOT GLUT_FOUND)
-	   message(ERROR ": GLUT not found!")
-	endif(NOT GLUT_FOUND)
-	
-endif(WIN32)
+# Configuração específica para Windows x64
+if(WIN32)
+    message(STATUS "Using FreeGLUT from vcpkg for x64 Windows")
 
+    # Copiar a DLL do FreeGLUT para a pasta de build (necessário para execução)
+    if (EXISTS "C:/vcpkg/installed/x64-windows/bin/freeglut.dll")
+        file(COPY "C:/vcpkg/installed/x64-windows/bin/freeglut.dll" DESTINATION ${CMAKE_BINARY_DIR})
+    endif()
 
+    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
 
-
-
-
+else() # Linux e macOS
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated")
+    
+    target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES})
+    
+    if(NOT GLUT_FOUND)
+        message(FATAL_ERROR "GLUT not found on Linux/macOS! Certifique-se de que foi instalado corretamente.")
+    endif()
+endif()
