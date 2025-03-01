@@ -106,7 +106,7 @@ int main(int argc, char** argv) {
     glutCreateWindow("3D Engine");
 
     glFrontFace(GL_CCW);  
-    //glEnable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);      
 
     glEnable(GL_DEPTH_TEST);

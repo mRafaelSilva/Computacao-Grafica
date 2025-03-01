@@ -155,7 +155,7 @@ void generateCone(float radius, float height, int slices, int stacks, const stri
     float angleStep = 2 * M_PI / slices;
     float stackHeight = height / stacks;
 
-    // Base do cone (círculo no plano XZ)
+    // Base do cone (apenas um triângulo CCW voltado para cima)
     for (int i = 0; i < slices; i++) {
         float theta1 = i * angleStep;
         float theta2 = (i + 1) * angleStep;
@@ -165,13 +165,13 @@ void generateCone(float radius, float height, int slices, int stacks, const stri
         float x2 = radius * cos(theta2);
         float z2 = radius * sin(theta2);
 
-        // Base
-        vertices.push_back(0); vertices.push_back(0); vertices.push_back(0); 
-        vertices.push_back(x1); vertices.push_back(0); vertices.push_back(z1);
-        vertices.push_back(x2); vertices.push_back(0); vertices.push_back(z2);
+        // Inverter a ordem para garantir CCW
+        vertices.push_back(0);  vertices.push_back(0);  vertices.push_back(0);
+        vertices.push_back(x1); vertices.push_back(0);  vertices.push_back(z1);
+        vertices.push_back(x2); vertices.push_back(0);  vertices.push_back(z2);
     }
 
-    // Laterais do cone
+    // Laterais do cone (triângulos CCW)
     for (int i = 0; i < stacks; i++) {
         float r1 = radius * (1 - (float)i / stacks);
         float r2 = radius * (1 - (float)(i + 1) / stacks);
@@ -191,38 +191,40 @@ void generateCone(float radius, float height, int slices, int stacks, const stri
             float x4 = r2 * cos(theta2);
             float z4 = r2 * sin(theta2);
 
-            // Triângulo de baixo
+            // Triângulo inferior (CCW)
             vertices.push_back(x1); vertices.push_back(y1); vertices.push_back(z1);
-            vertices.push_back(x2); vertices.push_back(y1); vertices.push_back(z2);
             vertices.push_back(x3); vertices.push_back(y2); vertices.push_back(z3);
+            vertices.push_back(x2); vertices.push_back(y1); vertices.push_back(z2);
 
-            // Triângulo de cima
+            // Triângulo superior (CCW)
             vertices.push_back(x2); vertices.push_back(y1); vertices.push_back(z2);
-            vertices.push_back(x4); vertices.push_back(y2); vertices.push_back(z4);
             vertices.push_back(x3); vertices.push_back(y2); vertices.push_back(z3);
+            vertices.push_back(x4); vertices.push_back(y2); vertices.push_back(z4);
         }
     }
 
-// Conectar a última stack ao ponto do topo
-float yTop = height;
-float lastRadius = radius * (1 - (float)(stacks - 1) / stacks); // Raio da última camada antes do topo
+    // Conectar a última stack ao ponto do topo (CCW)
+    float yTop = height;
+    float lastRadius = radius * (1 - (float)(stacks - 1) / stacks); 
 
-for (int i = 0; i < slices; i++) {
-    float theta1 = i * angleStep;
-    float theta2 = (i + 1) * angleStep;
+    for (int i = 0; i < slices; i++) {
+        float theta1 = i * angleStep;
+        float theta2 = (i + 1) * angleStep;
 
-    float x1 = lastRadius * cos(theta1);
-    float z1 = lastRadius * sin(theta1);
-    float x2 = lastRadius * cos(theta2);
-    float z2 = lastRadius * sin(theta2);
+        float x1 = lastRadius * cos(theta1);
+        float z1 = lastRadius * sin(theta1);
+        float x2 = lastRadius * cos(theta2);
+        float z2 = lastRadius * sin(theta2);
 
-    // Triângulo para conectar a última camada ao topo (ajustado para inverter a orientação CCW)
-    vertices.push_back(0);  vertices.push_back(yTop); vertices.push_back(0);  // Topo
-    vertices.push_back(x1); vertices.push_back(height - stackHeight); vertices.push_back(z1);
-    vertices.push_back(x2); vertices.push_back(height - stackHeight); vertices.push_back(z2);
-}
+        // Garantindo CCW
+        vertices.push_back(0);  vertices.push_back(yTop); vertices.push_back(0);
+        vertices.push_back(x2); vertices.push_back(height - stackHeight); vertices.push_back(z2);
+        vertices.push_back(x1); vertices.push_back(height - stackHeight); vertices.push_back(z1);
+    }
+
     writeVerticesToFile(filename, vertices);
 }
+
 
 
 int main(int argc, char* argv[]) {
