@@ -71,13 +71,18 @@ void changeSize(int w, int h) {
 void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
-    gluLookAt(1.5f, 1.5f, 1.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+    gluLookAt(2.5f, 2.5f, 6.0f,
+              0.0f, 0.0f, 0.0f, 
+              0.0f, 1.0f, 0.0f);
 
-    drawAxes();  // Desenha os eixos
-
+    // Desenha os eixos ANTES do cubo
+    glDisable(GL_DEPTH_TEST); // Para garantir que os eixos são sempre visíveis
+    drawAxes();
+    glEnable(GL_DEPTH_TEST);  // Reativa profundidade para o cubo
+    
     // Desenha o modelo carregado
     glColor3f(1.0f, 1.0f, 1.0f); // Cor branca para as linhas
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // Desenha apenas as linhas
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     
     glBegin(GL_TRIANGLES);
     for (size_t i = 0; i < vertices.size(); i += 3) {
@@ -85,13 +90,14 @@ void display() {
     }
     glEnd();
     
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // Restaura o modo de preenchimento
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     glutSwapBuffers();
 }
 
+
 int main(int argc, char** argv) {
-    loadModel("C:/Users/mrafa/OneDrive/Ambiente de Trabalho/Uni/CG/projeto/Generator/build/Release/plane.3d");
+    loadModel("C:/Users/mrafa/OneDrive/Ambiente de Trabalho/Uni/CG/projeto/Generator/build/Release/cone.3d");
 
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
@@ -99,10 +105,12 @@ int main(int argc, char** argv) {
     glutInitWindowPosition(100, 100);
     glutCreateWindow("3D Engine");
 
+    glFrontFace(GL_CCW);  
+    //glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);      
+
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);    
-    glFrontFace(GL_CCW);    
+    glDepthFunc(GL_LESS);
 
     glutDisplayFunc(display);
     glutReshapeFunc(changeSize);

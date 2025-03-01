@@ -26,47 +26,50 @@ void writeVerticesToFile(const string& filename, const vector<float>& vertices) 
 }
 
 void generateBox(float length, int subdivisions, const string& filename) {
-
     vector<float> vertices;
     float step = length / subdivisions;
     float half = length / 2;
 
-    // Define as seis faces da caixa
-    vector<pair<int, int>> faces = {
-        {1, 1}, {-1, 1}, {1, -1}, {-1, -1}, {1, 0}, {-1, 0}
-    };
+    for (int i = 0; i < subdivisions; i++) {
+        for (int j = 0; j < subdivisions; j++) {
+            float x1 = -half + j * step;
+            float y1 = -half + i * step;
+            float x2 = x1 + step;
+            float y2 = y1;
+            float x3 = x1;
+            float y3 = y1 + step;
+            float x4 = x2;
+            float y4 = y3;
 
-    for (auto [nx, ny] : faces) {
-        for (int i = 0; i < subdivisions; i++) {
-            for (int j = 0; j < subdivisions; j++) {
-                float x1 = -half + j * step;
-                float y1 = -half + i * step;
-                float x2 = x1 + step;
-                float y2 = y1;
-                float x3 = x1;
-                float y3 = y1 + step;
-                float x4 = x2;
-                float y4 = y3;
+            // Frente (Z positivo) - CCW
+            vertices.insert(vertices.end(), {x1, y1, half, x2, y2, half, x3, y3, half});
+            vertices.insert(vertices.end(), {x3, y3, half, x2, y2, half, x4, y4, half});
+            
+            // Trás (Z negativo) - CCW
+            vertices.insert(vertices.end(), {x1, y1, -half, x3, y3, -half, x2, y2, -half});
+            vertices.insert(vertices.end(), {x3, y3, -half, x4, y4, -half, x2, y2, -half});
+            
+            // Esquerda (X negativo) - CCW (Corrigido)
+            vertices.insert(vertices.end(), {-half, y1, x1, -half, y2, x2, -half, y3, x3});
+            vertices.insert(vertices.end(), {-half, y3, x3, -half, y2, x2, -half, y4, x4});
+            
+            // Direita (X positivo) - CCW (Corrigido)
+            vertices.insert(vertices.end(), {half, y1, x1, half, y3, x3, half, y2, x2});
+            vertices.insert(vertices.end(), {half, y3, x3, half, y4, x4, half, y2, x2});
 
-                float z = (nx == 0) ? ((ny == 1) ? half : -half) : x1;
-                float x = (ny == 0) ? ((nx == 1) ? half : -half) : x1;
-                float y = (nx != 0) ? y1 : ((ny == 1) ? half : -half);
-
-                // Triângulo 1
-                vertices.push_back(x1); vertices.push_back(y1); vertices.push_back(z);
-                vertices.push_back(x2); vertices.push_back(y2); vertices.push_back(z);
-                vertices.push_back(x3); vertices.push_back(y3); vertices.push_back(z);
-
-                // Triângulo 2
-                vertices.push_back(x2); vertices.push_back(y2); vertices.push_back(z);
-                vertices.push_back(x4); vertices.push_back(y4); vertices.push_back(z);
-                vertices.push_back(x3); vertices.push_back(y3); vertices.push_back(z);
-            }
+            // Superior (Y positivo) - CCW
+            vertices.insert(vertices.end(), {x1, half, y1, x3, half, y3, x2, half, y2});
+            vertices.insert(vertices.end(), {x3, half, y3, x4, half, y4, x2, half, y2});
+            
+            // Inferior (Y negativo) - CCW
+            vertices.insert(vertices.end(), {x1, -half, y1, x2, -half, y2, x3, -half, y3});
+            vertices.insert(vertices.end(), {x3, -half, y3, x2, -half, y2, x4, -half, y4});
         }
     }
 
     writeVerticesToFile(filename, vertices);
 }
+
 
 void generatePlane(float length, int subdivisions, const string& filename) {    
 
@@ -87,15 +90,14 @@ void generatePlane(float length, int subdivisions, const string& filename) {
             float z4 = z3;
 
 
-            vertices.push_back(x3); vertices.push_back(0); vertices.push_back(z3);
+            // Corrected counterclockwise (CCW) order
             vertices.push_back(x1); vertices.push_back(0); vertices.push_back(z1);
-            vertices.push_back(x2); vertices.push_back(0); vertices.push_back(z2);
-            
-
-            vertices.push_back(x4); vertices.push_back(0); vertices.push_back(z4);
             vertices.push_back(x3); vertices.push_back(0); vertices.push_back(z3);
             vertices.push_back(x2); vertices.push_back(0); vertices.push_back(z2);
             
+            vertices.push_back(x3); vertices.push_back(0); vertices.push_back(z3);
+            vertices.push_back(x4); vertices.push_back(0); vertices.push_back(z4);
+            vertices.push_back(x2); vertices.push_back(0); vertices.push_back(z2);
         }
     }
 
@@ -147,13 +149,13 @@ void generateSphere(float radius, int slices, int stacks, const string& filename
     writeVerticesToFile(filename, vertices);
 }
 
+
 void generateCone(float radius, float height, int slices, int stacks, const string& filename) {
     vector<float> vertices;
-    float stackHeight = height / stacks;
     float angleStep = 2 * M_PI / slices;
-    
-    // Base do cone (no plano XZ)
-    float yBase = 0;
+    float stackHeight = height / stacks;
+
+    // Base do cone (círculo no plano XZ)
     for (int i = 0; i < slices; i++) {
         float theta1 = i * angleStep;
         float theta2 = (i + 1) * angleStep;
@@ -163,10 +165,10 @@ void generateCone(float radius, float height, int slices, int stacks, const stri
         float x2 = radius * cos(theta2);
         float z2 = radius * sin(theta2);
 
-        // Triângulo da base (fixando o centro em (0,0,0))
-        vertices.push_back(0); vertices.push_back(yBase); vertices.push_back(0);
-        vertices.push_back(x2); vertices.push_back(yBase); vertices.push_back(z2);
-        vertices.push_back(x1); vertices.push_back(yBase); vertices.push_back(z1);
+        // Base
+        vertices.push_back(0); vertices.push_back(0); vertices.push_back(0); 
+        vertices.push_back(x1); vertices.push_back(0); vertices.push_back(z1);
+        vertices.push_back(x2); vertices.push_back(0); vertices.push_back(z2);
     }
 
     // Laterais do cone
@@ -189,41 +191,42 @@ void generateCone(float radius, float height, int slices, int stacks, const stri
             float x4 = r2 * cos(theta2);
             float z4 = r2 * sin(theta2);
 
-            // Triângulo 1 (inferior)
+            // Triângulo de baixo
             vertices.push_back(x1); vertices.push_back(y1); vertices.push_back(z1);
             vertices.push_back(x2); vertices.push_back(y1); vertices.push_back(z2);
             vertices.push_back(x3); vertices.push_back(y2); vertices.push_back(z3);
 
-            // Triângulo 2 (superior)
+            // Triângulo de cima
             vertices.push_back(x2); vertices.push_back(y1); vertices.push_back(z2);
             vertices.push_back(x4); vertices.push_back(y2); vertices.push_back(z4);
             vertices.push_back(x3); vertices.push_back(y2); vertices.push_back(z3);
         }
     }
 
-    // Ponto do topo do cone
-    float yTop = height;
-    for (int i = 0; i < slices; i++) {
-        float theta1 = i * angleStep;
-        float theta2 = (i + 1) * angleStep;
+// Conectar a última stack ao ponto do topo
+float yTop = height;
+float lastRadius = radius * (1 - (float)(stacks - 1) / stacks); // Raio da última camada antes do topo
 
-        float x1 = radius * cos(theta1);
-        float z1 = radius * sin(theta1);
-        float x2 = radius * cos(theta2);
-        float z2 = radius * sin(theta2);
+for (int i = 0; i < slices; i++) {
+    float theta1 = i * angleStep;
+    float theta2 = (i + 1) * angleStep;
 
-        // Triângulo que liga a última stack ao topo
-        vertices.push_back(x1); vertices.push_back(height - stackHeight); vertices.push_back(z1);
-        vertices.push_back(x2); vertices.push_back(height - stackHeight); vertices.push_back(z2);
-        vertices.push_back(0); vertices.push_back(yTop); vertices.push_back(0);
-    }
+    float x1 = lastRadius * cos(theta1);
+    float z1 = lastRadius * sin(theta1);
+    float x2 = lastRadius * cos(theta2);
+    float z2 = lastRadius * sin(theta2);
 
+    // Triângulo para conectar a última camada ao topo (ajustado para inverter a orientação CCW)
+    vertices.push_back(0);  vertices.push_back(yTop); vertices.push_back(0);  // Topo
+    vertices.push_back(x1); vertices.push_back(height - stackHeight); vertices.push_back(z1);
+    vertices.push_back(x2); vertices.push_back(height - stackHeight); vertices.push_back(z2);
+}
     writeVerticesToFile(filename, vertices);
 }
 
 
 int main(int argc, char* argv[]) {
-    if ((argc != 5) && (argc != 6)) {
+    if ((argc != 5) && (argc != 6) && (argc != 7)) {
         cerr << "Uso: generator plane <comprimento> <subdivisoes> <ficheiro>" << endl;
         return 1;
     }
