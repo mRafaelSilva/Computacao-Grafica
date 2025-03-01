@@ -100,7 +100,9 @@ int main(int argc, char** argv) {
     glutCreateWindow("3D Engine");
 
     glEnable(GL_DEPTH_TEST);
-    glDisable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);    
+    glFrontFace(GL_CCW);    
 
     glutDisplayFunc(display);
     glutReshapeFunc(changeSize);
