@@ -1,0 +1,10 @@
+^C:\USERS\MRAFA\ONEDRIVE\AMBIENTE DE TRABALHO\UNI\CG\PROJETO\GENERATOR\BUILD\CMAKEFILES\C4D9FAE9A938512F18E29D63EF319B8E\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" "-SC:/Users/mrafa/OneDrive/Ambiente de Trabalho/Uni/CG/projeto/Generator" "-BC:/Users/mrafa/OneDrive/Ambiente de Trabalho/Uni/CG/projeto/Generator/build" --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file "C:/Users/mrafa/OneDrive/Ambiente de Trabalho/Uni/CG/projeto/Generator/build/CGProject.sln"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

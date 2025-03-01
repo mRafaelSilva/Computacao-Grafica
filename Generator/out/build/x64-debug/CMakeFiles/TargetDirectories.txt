@@ -1,3 +1,0 @@
-C:/Users/mrafa/OneDrive/Ambiente de Trabalho/Uni/CG/projeto/Generator/out/build/x64-debug/CMakeFiles/Generator.dir
-C:/Users/mrafa/OneDrive/Ambiente de Trabalho/Uni/CG/projeto/Generator/out/build/x64-debug/CMakeFiles/edit_cache.dir
-C:/Users/mrafa/OneDrive/Ambiente de Trabalho/Uni/CG/projeto/Generator/out/build/x64-debug/CMakeFiles/rebuild_cache.dir

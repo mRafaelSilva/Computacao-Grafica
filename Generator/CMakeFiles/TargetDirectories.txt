@@ -1,3 +1,0 @@
-C:/Users/mrafa/OneDrive/Ambiente de Trabalho/Uni/CG/projeto/Generator/CMakeFiles/Generator.dir
-C:/Users/mrafa/OneDrive/Ambiente de Trabalho/Uni/CG/projeto/Generator/CMakeFiles/ALL_BUILD.dir
-C:/Users/mrafa/OneDrive/Ambiente de Trabalho/Uni/CG/projeto/Generator/CMakeFiles/ZERO_CHECK.dir
