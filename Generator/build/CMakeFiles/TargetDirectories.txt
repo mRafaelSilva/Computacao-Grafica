@@ -1,4 +1,0 @@
-C:/Users/maria/OneDrive/Ambiente de Trabalho/Computacao-Grafica/Generator/build/CMakeFiles/Generator.dir
-C:/Users/maria/OneDrive/Ambiente de Trabalho/Computacao-Grafica/Generator/build/CMakeFiles/Engine.dir
-C:/Users/maria/OneDrive/Ambiente de Trabalho/Computacao-Grafica/Generator/build/CMakeFiles/ALL_BUILD.dir
-C:/Users/maria/OneDrive/Ambiente de Trabalho/Computacao-Grafica/Generator/build/CMakeFiles/ZERO_CHECK.dir

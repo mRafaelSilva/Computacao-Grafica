@@ -8,10 +8,10 @@
     </camera>
     <group>
         <models>
-            <model file="Release/box.3d" />
-			<model file="Release/plane.3d" />
-			<model file="Release/cone.3d" />
-			<model file="Release/sphere.3d" />
+            <model file="box.3d" />
+			<model file="plane.3d" />
+			<model file="cone.3d" />
+			<model file="sphere.3d" />
 «        </models>
     </group>
 </world>
