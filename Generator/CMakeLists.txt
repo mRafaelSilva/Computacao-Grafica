@@ -22,48 +22,70 @@ add_executable(Engine engine.cpp)
 # Encontrar e incluir OpenGL
 find_package(OpenGL REQUIRED)
 
-# Definir manualmente o caminho do FreeGLUT
-set(GLUT_INCLUDE_DIR "C:/vcpkg/installed/x64-windows/include")
-set(GLUT_LIB_DIR "C:/vcpkg/installed/x64-windows/lib")
-set(GLUT_LIBRARIES "C:/vcpkg/installed/x64-windows/lib/freeglut.lib")
+# Definir manualmente o caminho do FreeGLUT (instalado via vcpkg)
+set(GLUT_INCLUDE_DIR "C:/vcpkg/installed/x86-windows/include")
+set(GLUT_LIB_DIR     "C:/vcpkg/installed/x86-windows/lib")
+set(GLUT_LIBRARIES   "C:/vcpkg/installed/x86-windows/lib/freeglut.lib")
 
 # Verificar se os diretórios existem
 if(NOT EXISTS "${GLUT_LIBRARIES}" OR NOT EXISTS "${GLUT_INCLUDE_DIR}")
-    message(FATAL_ERROR "FreeGLUT não encontrado! Certifique-se de que está instalado via vcpkg.")
+    message(FATAL_ERROR "FreeGLUT não encontrado! Certifique-se de que está instalado via vcpkg (freeglut:x86-windows).")
 endif()
 
 # Incluir diretórios de OpenGL e FreeGLUT
 include_directories(${OPENGL_INCLUDE_DIRS} ${GLUT_INCLUDE_DIR})
 link_directories(${GLUT_LIB_DIR})
 
-# Adicionar caminho do vcpkg para encontrar TinyXML
-set(CMAKE_PREFIX_PATH "C:/vcpkg/installed/x64-windows")
+# Adicionar caminho do vcpkg para encontrar bibliotecas
+set(CMAKE_PREFIX_PATH "C:/vcpkg/installed/x86-windows")
 
-# Encontrar e incluir TinyXML
-find_library(TINYXML_LIB NAMES tinyxml PATHS "C:/vcpkg/installed/x64-windows/lib" NO_DEFAULT_PATH)
-include_directories("C:/vcpkg/installed/x64-windows/include")
+# Encontrar a biblioteca tinyxml2 (NÃO tinyxml)
+find_library(TINYXML2_LIB 
+    NAMES tinyxml2
+    PATHS "C:/vcpkg/installed/x86-windows/lib"
+    NO_DEFAULT_PATH
+)
+if(NOT TINYXML2_LIB)
+    message(FATAL_ERROR 
+        "tinyxml2 library not found! Certifique-se de que foi instalado via vcpkg (tinyxml2:x86-windows)."
+    )
+endif()
+
+# Incluir diretório de cabeçalhos do tinyxml2
+include_directories("C:/vcpkg/installed/x86-windows/include")
 
 # Adicionar bibliotecas ao executável do Generator
-target_link_libraries(Generator PRIVATE ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} ${TINYXML_LIB})
+target_link_libraries(Generator 
+    PRIVATE 
+        ${OPENGL_LIBRARIES} 
+        ${GLUT_LIBRARIES} 
+        ${TINYXML2_LIB}
+)
 
 # Adicionar bibliotecas ao executável do Engine
-target_link_libraries(Engine PRIVATE ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} ${TINYXML_LIB})
+target_link_libraries(Engine 
+    PRIVATE 
+        ${OPENGL_LIBRARIES} 
+        ${GLUT_LIBRARIES} 
+        ${TINYXML2_LIB}
+)
 
-# Configuração específica para Windows x64
+# Configuração específica para Windows x86
 if(WIN32)
-    message(STATUS "Using FreeGLUT and TinyXML from vcpkg for x64 Windows")
+    message(STATUS "Using FreeGLUT and tinyxml2 from vcpkg for x86 Windows")
 
     # Copiar a DLL do FreeGLUT para a pasta de build (necessário para execução)
-    if (EXISTS "C:/vcpkg/installed/x64-windows/bin/freeglut.dll")
-        file(COPY "C:/vcpkg/installed/x64-windows/bin/freeglut.dll" DESTINATION ${CMAKE_BINARY_DIR})
+    if (EXISTS "C:/vcpkg/installed/x86-windows/bin/freeglut.dll")
+        file(COPY "C:/vcpkg/installed/x86-windows/bin/freeglut.dll" DESTINATION ${CMAKE_BINARY_DIR})
     endif()
 
+    # Define o projeto inicial no Visual Studio
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT Generator)
 
 else() # Linux e macOS
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated")
     target_link_libraries(Generator PRIVATE ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES})
-    target_link_libraries(Engine PRIVATE ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES})
+    target_link_libraries(Engine    PRIVATE ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES})
     
     if(NOT GLUT_FOUND)
         message(FATAL_ERROR "GLUT not found on Linux/macOS! Certifique-se de que foi instalado corretamente.")

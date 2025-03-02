@@ -1,0 +1,8 @@
+﻿  Building Custom Rule C:/Users/maria/OneDrive/Ambiente de Trabalho/Computacao-Grafica/Generator/CMakeLists.txt
+  Generator.cpp
+C:\Users\maria\OneDrive\Ambiente de Trabalho\Computacao-Grafica\Generator\Generator.cpp(114,22): warning C4244: 'inicializando': conversão de 'double' para 'float', possível perda de dados
+C:\Users\maria\OneDrive\Ambiente de Trabalho\Computacao-Grafica\Generator\Generator.cpp(115,22): warning C4244: 'inicializando': conversão de 'double' para 'float', possível perda de dados
+C:\Users\maria\OneDrive\Ambiente de Trabalho\Computacao-Grafica\Generator\Generator.cpp(118,24): warning C4244: 'inicializando': conversão de 'double' para 'float', possível perda de dados
+C:\Users\maria\OneDrive\Ambiente de Trabalho\Computacao-Grafica\Generator\Generator.cpp(119,24): warning C4244: 'inicializando': conversão de 'double' para 'float', possível perda de dados
+C:\Users\maria\OneDrive\Ambiente de Trabalho\Computacao-Grafica\Generator\Generator.cpp(155,21): warning C4244: 'inicializando': conversão de 'double' para 'float', possível perda de dados
+  Generator.vcxproj -> C:\Users\maria\OneDrive\Ambiente de Trabalho\Computacao-Grafica\Generator\build\Debug\Generator.exe
