@@ -27,12 +27,12 @@ void parsexml(const char* file) {
         return;
     }
     XMLElement* first = doc.FirstChildElement("world");
-    XMLElement * windowElem = root->FirstChildElement("window");
+    XMLElement * windowElem = first->FirstChildElement("window");
     if (windowElem) {
         windowElem->QueryIntAttribute("width", &width);
         windowElem->QueryIntAttribute("height", &height);
     }
-    XMLElement* camElem = root->FirstChildElement("camera");
+    XMLElement* camElem = first->FirstChildElement("camera");
     if (camElem) {
         XMLElement* pos = camElem->FirstChildElement("position");
         if (pos) pos->QueryFloatAttribute("x", &camera.posX);
@@ -55,7 +55,7 @@ void parsexml(const char* file) {
         if (proj) proj->QueryFloatAttribute("far", &camera.far);
     }
 
-    XMLElement* groupElem = root->FirstChildElement("group");
+    XMLElement* groupElem = first->FirstChildElement("group");
     if (groupElem) {
         XMLElement* modelsElem = groupElem->FirstChildElement("models");
         if (modelsElem) {
