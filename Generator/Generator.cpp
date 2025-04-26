@@ -1,6 +1,7 @@
 ﻿#define _USE_MATH_DEFINES
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <vector>
 #include <string>
 #include <cmath>
@@ -9,10 +10,10 @@
 using namespace std;
 
 
-void writeVertices(const string& filename, const vector<float>& vertices) {
+void writeVerticesToFile(const string& filename, const vector<float>& vertices) {
     ofstream file(filename);
     if (!file) {
-        cerr << "Erro a criar o ficheiro" << endl;
+        cerr << "Erro ao criar o ficheiro." << endl;
         return;
     }
 
@@ -22,7 +23,7 @@ void writeVertices(const string& filename, const vector<float>& vertices) {
     }
 
     file.close();
-    cout << "O ficheiro " << filename << " foi criado" << endl;
+    cout << "Ficheiro " << filename << " criado"<< endl;
 }
 
 void generateBox(float length, int subdivisions, const string& filename) {
@@ -41,33 +42,27 @@ void generateBox(float length, int subdivisions, const string& filename) {
             float x4 = x2;
             float y4 = y3;
 
-           
             vertices.insert(vertices.end(), {x1, y1, half, x2, y2, half, x3, y3, half});
             vertices.insert(vertices.end(), {x3, y3, half, x2, y2, half, x4, y4, half});
-            
-            
+
             vertices.insert(vertices.end(), {x1, y1, -half, x3, y3, -half, x2, y2, -half});
             vertices.insert(vertices.end(), {x3, y3, -half, x4, y4, -half, x2, y2, -half});
-            
-            
+
             vertices.insert(vertices.end(), {-half, y1, x1, -half, y2, x2, -half, y3, x3});
             vertices.insert(vertices.end(), {-half, y3, x3, -half, y2, x2, -half, y4, x4});
-            
             
             vertices.insert(vertices.end(), {half, y1, x1, half, y3, x3, half, y2, x2});
             vertices.insert(vertices.end(), {half, y3, x3, half, y4, x4, half, y2, x2});
 
-            
             vertices.insert(vertices.end(), {x1, half, y1, x3, half, y3, x2, half, y2});
             vertices.insert(vertices.end(), {x3, half, y3, x4, half, y4, x2, half, y2});
-            
             
             vertices.insert(vertices.end(), {x1, -half, y1, x2, -half, y2, x3, -half, y3});
             vertices.insert(vertices.end(), {x3, -half, y3, x2, -half, y2, x4, -half, y4});
         }
     }
 
-    writeVertices(filename, vertices);
+    writeVerticesToFile(filename, vertices);
 }
 
 
@@ -75,11 +70,10 @@ void generatePlane(float length, int subdivisions, const string& filename) {
 
     vector<float> vertices;
     float step = length / subdivisions;  
-    float half = length / 2;            
+    float half = length / 2;             
 
     for (int i = 0; i < subdivisions; i++) {
         for (int j = 0; j < subdivisions; j++) {
-            
             float x1 = -half + j * step;
             float z1 = -half + i * step;
             float x2 = x1 + step;
@@ -89,8 +83,6 @@ void generatePlane(float length, int subdivisions, const string& filename) {
             float x4 = x2;
             float z4 = z3;
 
-
-            
             vertices.push_back(x1); vertices.push_back(0); vertices.push_back(z1);
             vertices.push_back(x3); vertices.push_back(0); vertices.push_back(z3);
             vertices.push_back(x2); vertices.push_back(0); vertices.push_back(z2);
@@ -101,7 +93,7 @@ void generatePlane(float length, int subdivisions, const string& filename) {
         }
     }
 
-    writeVertices(filename, vertices);
+    writeVerticesToFile(filename, vertices);
 }
 
 
@@ -134,19 +126,17 @@ void generateSphere(float radius, int slices, int stacks, const string& filename
             float y4 = radius * cos(theta2);
             float z4 = radius * sin(theta2) * sin(phi2);
 
-            // Triângulo 1
             vertices.push_back(x2); vertices.push_back(y1); vertices.push_back(z2);
             vertices.push_back(x3); vertices.push_back(y3); vertices.push_back(z3);
             vertices.push_back(x1); vertices.push_back(y2); vertices.push_back(z1);
 
-            // Triângulo 2
             vertices.push_back(x2); vertices.push_back(y2); vertices.push_back(z2);
             vertices.push_back(x4); vertices.push_back(y3); vertices.push_back(z4);
             vertices.push_back(x3); vertices.push_back(y4); vertices.push_back(z3);
         }
     }
 
-    writeVertices(filename, vertices);
+    writeVerticesToFile(filename, vertices);
 }
 
 
@@ -155,7 +145,6 @@ void generateCone(float radius, float height, int slices, int stacks, const stri
     float angleStep = 2 * M_PI / slices;
     float stackHeight = height / stacks;
 
-    // Base 
     for (int i = 0; i < slices; i++) {
         float theta1 = i * angleStep;
         float theta2 = (i + 1) * angleStep;
@@ -165,13 +154,11 @@ void generateCone(float radius, float height, int slices, int stacks, const stri
         float x2 = radius * cos(theta2);
         float z2 = radius * sin(theta2);
 
-        
         vertices.push_back(0);  vertices.push_back(0);  vertices.push_back(0);
         vertices.push_back(x1); vertices.push_back(0);  vertices.push_back(z1);
         vertices.push_back(x2); vertices.push_back(0);  vertices.push_back(z2);
     }
 
-    // Laterais do cone 
     for (int i = 0; i < stacks; i++) {
         float r1 = radius * (1 - (float)i / stacks);
         float r2 = radius * (1 - (float)(i + 1) / stacks);
@@ -191,19 +178,15 @@ void generateCone(float radius, float height, int slices, int stacks, const stri
             float x4 = r2 * cos(theta2);
             float z4 = r2 * sin(theta2);
 
-            // Triângulo inferior 
             vertices.push_back(x1); vertices.push_back(y1); vertices.push_back(z1);
             vertices.push_back(x3); vertices.push_back(y2); vertices.push_back(z3);
             vertices.push_back(x2); vertices.push_back(y1); vertices.push_back(z2);
-
-            // Triângulo superior 
             vertices.push_back(x2); vertices.push_back(y1); vertices.push_back(z2);
             vertices.push_back(x3); vertices.push_back(y2); vertices.push_back(z3);
             vertices.push_back(x4); vertices.push_back(y2); vertices.push_back(z4);
         }
     }
 
-    // Ligar a última camada ao topo
     float yTop = height;
     float lastRadius = radius * (1 - (float)(stacks - 1) / stacks); 
 
@@ -221,57 +204,259 @@ void generateCone(float radius, float height, int slices, int stacks, const stri
         vertices.push_back(x1); vertices.push_back(height - stackHeight); vertices.push_back(z1);
     }
 
-    writeVertices(filename, vertices);
+    writeVerticesToFile(filename, vertices);
+}
+
+void generateRing(float innerRadius, float outerRadius, int slices, const string& filename) {
+    vector<float> vertices;
+    float angleStep = 2 * M_PI / slices;
+
+    for (int i = 0; i < slices; i++) {
+        float theta1 = i * angleStep;
+        float theta2 = (i + 1) * angleStep;
+
+        float x1_in = innerRadius * cos(theta1);
+        float z1_in = innerRadius * sin(theta1);
+        float x1_out = outerRadius * cos(theta1);
+        float z1_out = outerRadius * sin(theta1);
+
+        float x2_in = innerRadius * cos(theta2);
+        float z2_in = innerRadius * sin(theta2);
+        float x2_out = outerRadius * cos(theta2);
+        float z2_out = outerRadius * sin(theta2);
+
+        vertices.push_back(x1_in); vertices.push_back(0); vertices.push_back(z1_in);
+        vertices.push_back(x2_in); vertices.push_back(0); vertices.push_back(z2_in);
+        vertices.push_back(x1_out); vertices.push_back(0); vertices.push_back(z1_out);
+
+        vertices.push_back(x1_out); vertices.push_back(0); vertices.push_back(z1_out);
+        vertices.push_back(x2_in); vertices.push_back(0); vertices.push_back(z2_in);
+        vertices.push_back(x2_out); vertices.push_back(0); vertices.push_back(z2_out);
+    }
+
+    writeVerticesToFile(filename, vertices);
+}
+
+// Helper function to calculate a point on a Bezier patch
+vector<float> calculateBezierPoint(float u, float v, const vector<int>& patchIndices, const vector<float>& controlPoints) {
+    vector<float> result(3, 0.0f);
+
+    // Bernstein basis polynomials
+    auto bernstein = [](int i, float t) {
+        switch (i) {
+        case 0: return (1 - t) * (1 - t) * (1 - t);
+        case 1: return 3 * t * (1 - t) * (1 - t);
+        case 2: return 3 * t * t * (1 - t);
+        case 3: return t * t * t;
+        default: return 0.0f;
+        }
+        };
+
+    // Calculate the point using the Bezier formula
+    for (int i = 0; i < 4; i++) {
+        float bernU = bernstein(i, u);
+        for (int j = 0; j < 4; j++) {
+            float bernV = bernstein(j, v);
+            float weight = bernU * bernV;
+
+            int index = patchIndices[i * 4 + j] * 3; // Get control point index
+
+            // Add weighted contribution of this control point
+            result[0] += controlPoints[index] * weight;
+            result[1] += controlPoints[index + 1] * weight;
+            result[2] += controlPoints[index + 2] * weight;
+        }
+    }
+
+    return result;
+}
+// Bezier patch implementation
+void generateBezierPatch(const string& patchFilename, int tessellation, const string& outputFilename) {
+    ifstream patchFile(patchFilename);
+    if (!patchFile) {
+        cerr << "Error opening patch file: " << patchFilename << endl;
+        return;
+    }
+
+    // Read the number of patches
+    int numPatches;
+    patchFile >> numPatches;
+
+    // Read patch indices
+    vector<vector<int>> patches(numPatches, vector<int>(16));
+    for (int i = 0; i < numPatches; i++) {
+        for (int j = 0; j < 16; j++) {
+            patchFile >> patches[i][j];
+            // Skip commas
+            if (j < 15) {
+                char comma;
+                patchFile >> comma;
+            }
+        }
+    }
+
+    // Read the number of control points
+    int numControlPoints;
+    patchFile >> numControlPoints;
+
+    // Read control points
+    vector<float> controlPoints;
+    controlPoints.reserve(numControlPoints * 3);
+    for (int i = 0; i < numControlPoints; i++) {
+        float x, y, z;
+        char comma;
+        patchFile >> x >> comma >> y >> comma >> z;
+        controlPoints.push_back(x);
+        controlPoints.push_back(y);
+        controlPoints.push_back(z);
+    }
+
+    patchFile.close();
+
+    // Calculate Bezier surface points and generate triangles
+    vector<float> vertices;
+    float step = 1.0f / tessellation;
+
+    // For each patch
+    for (int p = 0; p < numPatches; p++) {
+        // For each grid cell in the tessellation
+        for (int i = 0; i < tessellation; i++) {
+            for (int j = 0; j < tessellation; j++) {
+                float u1 = i * step;
+                float v1 = j * step;
+                float u2 = (i + 1) * step;
+                float v2 = (j + 1) * step;
+
+                // Calculate the four corners of this grid cell
+                vector<float> p1 = calculateBezierPoint(u1, v1, patches[p], controlPoints);
+                vector<float> p2 = calculateBezierPoint(u1, v2, patches[p], controlPoints);
+                vector<float> p3 = calculateBezierPoint(u2, v1, patches[p], controlPoints);
+                vector<float> p4 = calculateBezierPoint(u2, v2, patches[p], controlPoints);
+
+                // Add two triangles to form a quad
+                // Triangle 1
+                vertices.insert(vertices.end(), p1.begin(), p1.end());
+                vertices.insert(vertices.end(), p2.begin(), p2.end());
+                vertices.insert(vertices.end(), p3.begin(), p3.end());
+
+                // Triangle 2
+                vertices.insert(vertices.end(), p2.begin(), p2.end());
+                vertices.insert(vertices.end(), p4.begin(), p4.end());
+                vertices.insert(vertices.end(), p3.begin(), p3.end());
+            }
+        }
+    }
+
+    writeVerticesToFile(outputFilename, vertices);
 }
 
 
 
-int main(int argc, char* argv[]) {
-    if ((argc != 5) && (argc != 6) && (argc != 7)) {
-        cerr << "erro no input" << endl;
+int processCommand(const vector<string>& args) {
+    string type = args[0];
+
+    if (type == "plane") {
+        float length = stof(args[1]);
+        int subdivisions = stoi(args[2]);
+        string filename = args[3];
+        generatePlane(length, subdivisions, filename);
+    }
+    else if (type == "box") {
+        float length = stof(args[1]);
+        int subdivisions = stoi(args[2]);
+        string filename = args[3];
+        generateBox(length, subdivisions, filename);
+    }
+    else if (type == "sphere") {
+        float radius = stof(args[1]);
+        int slices = stoi(args[2]);
+        int stacks = stoi(args[3]);
+        string filename = args[4];
+        generateSphere(radius, slices, stacks, filename);
+    }
+    else if (type == "cone") {
+        float radius = stof(args[1]);
+        float height = stof(args[2]);
+        int slices = stoi(args[3]);
+        int stacks = stoi(args[4]);
+        string filename = args[5];
+        generateCone(radius, height, slices, stacks, filename);
+    }
+
+    else if (type == "ring") {
+        float inner = stof(args[1]);
+        float outer = stof(args[2]);
+        int slices = stoi(args[3]);
+        string filename = args[4];
+        generateRing(inner, outer, slices, filename);
+    }
+
+    else if (type == "bezier") {
+        // New code for Bezier patches
+        if (args.size() < 4) {
+            cerr << "Usage: bezier <patch_file> <tessellation> <output_file>" << endl;
+            return 1;
+        }
+        string patchFile = args[1];
+        int tessellation = stoi(args[2]);
+        string outputFile = args[3];
+        generateBezierPatch(patchFile, tessellation, outputFile);
+    }
+
+    else {
+        cerr << "Figura inválida: " << type << endl;
         return 1;
     }
 
-    string type = argv[1];
+    return 0;
+}
 
-    if (type == "plane") {
-        float length = stof(argv[2]);
-        int subdivisions = stoi(argv[3]);
-        string filename = argv[4];
+vector<string> split(const string& line) {
+    stringstream ss(line);
+    string arg;
+    vector<string> args;
+    while (ss >> arg) {
+        args.push_back(arg);
+    }
+    return args;
+}
 
-        generatePlane(length, subdivisions, filename);
+int main(int argc, char* argv[]) {
+    if (argc < 2) {
+        cerr << "Uso: ./generator <comando> ou ./generator <ficheiro.txt>" << endl;
+        return 1;
     }
 
-    else if (type == "box") {
-        float length = stof(argv[2]);
-        int subdivisions = stoi(argv[3]);
-        string filename = argv[4];
+    string firstArg = argv[1];
 
-        generateBox(length,subdivisions,filename);
+    if (firstArg.size() > 4 && firstArg.substr(firstArg.size() - 4) == ".txt") {
+        ifstream file(firstArg);
+        if (!file) {
+            cerr << "Erro ao abrir o ficheiro: " << firstArg << endl;
+            return 1;
+        }
+
+        string line;
+        while (getline(file, line)) {
+            if (line.empty()) continue;
+            vector<string> args = split(line);
+            if (!args.empty()) {
+                if (processCommand(args) != 0) {
+                    cerr << "Erro ao processar comando: " << line << endl;
+                }
+            }
+        }
+
+        file.close();
     }
-
-    else if (type == "sphere") {
-        float raio = stof(argv[2]);
-        int fatias = stoi(argv[3]);
-        int stacks = stoi(argv[4]);
-        string filename = argv[5];
-
-        generateSphere(raio,fatias,stacks,filename);
-    }
-
-    else if (type == "cone") {
-        float radius = stof(argv[2]);
-        float height = stof(argv[3]);
-        int slices = stoi(argv[4]);
-        int stacks = stoi(argv[5]);
-        string filename = argv[6];
-    
-        generateCone(radius, height, slices, stacks, filename);
-    }
-    
     else {
-        cerr << "Tipo de figura inválido" << endl;
+        vector<string> args;
+        for (int i = 1; i < argc; ++i) {
+            args.push_back(argv[i]);
+        }
+        return processCommand(args);
     }
 
     return 0;
-}   
+}
+

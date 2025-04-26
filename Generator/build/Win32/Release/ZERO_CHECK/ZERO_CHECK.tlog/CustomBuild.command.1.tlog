@@ -1,0 +1,10 @@
+^C:\USERS\FILIP\ONEDRIVE\AMBIENTE DE TRABALHO\TESTE\CÓDIGO\BUILD\CMAKEFILES\9DD80AE1ED771F94DB1C61E0962818B1\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" "-SC:/Users/filip/OneDrive/Ambiente de Trabalho/teste/Código" "-BC:/Users/filip/OneDrive/Ambiente de Trabalho/teste/Código/build" --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file "C:/Users/filip/OneDrive/Ambiente de Trabalho/teste/Código/build/CGProject.sln"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

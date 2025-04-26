@@ -1,0 +1,5 @@
+C:/Users/filip/OneDrive/Ambiente de Trabalho/teste/Código/build/CMakeFiles/Generator.dir
+C:/Users/filip/OneDrive/Ambiente de Trabalho/teste/Código/build/CMakeFiles/Engine.dir
+C:/Users/filip/OneDrive/Ambiente de Trabalho/teste/Código/build/CMakeFiles/run.dir
+C:/Users/filip/OneDrive/Ambiente de Trabalho/teste/Código/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/filip/OneDrive/Ambiente de Trabalho/teste/Código/build/CMakeFiles/ZERO_CHECK.dir

@@ -1,0 +1,12 @@
+sphere 2 30 30 sol.3d
+sphere 0.3 20 20 mercurio.3d
+sphere 0.5 20 20 venus.3d
+sphere 0.6 20 20 terra.3d
+sphere 0.15 20 20 lua.3d
+sphere 0.4 20 20 marte.3d
+sphere 1.5 30 30 jupiter.3d
+sphere 1.2 30 30 saturno.3d
+sphere 0.9 25 25 urano.3d
+sphere 0.8 25 25 neptuno.3d
+ring 1.3 2.0 150 aneis.3d
+bezier teapot.patch 10 cometa.3d
